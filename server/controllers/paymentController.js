@@ -1,56 +1,62 @@
-const axios = require("axios")
+const axios = require("axios");
 
-const CHAPA_URL = process.env.CHAPA_URL || "https://api.chapa.co/v1/transaction/initialize"
-const CHAPA_AUTH = process.env.CHAPA_AUTH // || register to chapa and get the key
+const CHAPA_URL = process.env.CHAPA_URL || "https://api.chapa.co/v1/transaction/initialize";
+const CHAPA_AUTH = process.env.CHAPA_AUTH;
 
+// Initialize Payment
 const initializePayment = async (req, res) => {
-
     const config = {
         headers: {
-            Authorization: CHAPA_AUTH
+            Authorization: `Bearer ${CHAPA_AUTH}`
         }
-    }
+    };
 
-    // chapa redirect you to this url when payment is successful
-    const CALLBACK_URL = "http://localhost:3000"
+    const CALLBACK_URL = "http://localhost:3000/payment-success";
+    const TEXT_REF = "tx-myecommerce-" + Date.now();
 
-    // a unique reference given to every transaction
-    const TEXT_REF = "tx-myecommerce12345-" + Date.now()
-
-    // form data
     const data = {
-        amount: req.body.amount, 
+        amount: req.body.amount,
         currency: 'ETB',
-        email: 'ato@ekele.com',
-        first_name: 'Ato',
-        last_name: 'Ekele',
+        email: req.body.email || 'ato@ekele.com',
+        first_name: req.body.first_name || 'Ato',
+        last_name: req.body.last_name || 'Ekele',
         tx_ref: TEXT_REF,
         callback_url: CALLBACK_URL
+    };
+
+    try {
+        const response = await axios.post(CHAPA_URL, data, config);
+        res.status(200).json({
+            success: true,
+            checkout_url: response.data.data.checkout_url
+        });
+    } catch (error) {
+        console.error("Chapa payment initialization failed", error.message);
+        res.status(500).json({ success: false, error: error.message });
     }
+};
 
-    // post request to chapa
-    await axios.post(CHAPA_URL, data, config)
-        .then((response) => {
-            res.send(response.data.data.checkout_url)
-            console.log(response.data)
-        })
-        .catch((err) => console.log(err))
-
-        /* res.json({res: "message", url: CALLBACK_URL}) */
-}
-
+// Verify Payment
 const verifyPayment = async (req, res) => {
-        await axios.get("https://api.chapa.co/v1/transaction/verify/" + req.params.id, config)
-            .then((response) => {
-                console.log(response)
-                res.json({message: response})
-            }) 
-            .catch((err) => {
-                console.log("Payment can't be verfied", err)
-                res.json({error: err})
-            })
+    const config = {
+        headers: {
+            Authorization: `Bearer ${CHAPA_AUTH}`
+        }
+    };
 
-            res.json({message: "response", param: req.params.id})
-}
+    try {
+        const response = await axios.get(
+            `https://api.chapa.co/v1/transaction/verify/${req.params.id}`,
+            config
+        );
+        res.status(200).json({
+            success: true,
+            data: response.data
+        });
+    } catch (err) {
+        console.error("Payment verification failed", err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+};
 
-module.exports = { initializePayment, verifyPayment }
+module.exports = { initializePayment, verifyPayment };
