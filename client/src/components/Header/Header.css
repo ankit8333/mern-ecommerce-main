@@ -1,67 +1,47 @@
-/* Style for the header */
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #333;
-    color: white;
-    padding: 15px 30px;
-  }
-  
-  .header-left {
-    display: flex;
-    gap: 20px;
-  }
-  
-  .header-left a {
-    color: white;
-    text-decoration: none;
-    font-size: 16px;
-  }
-  
-  .header-left a:hover {
-    color: #ff7f50;
-  }
-  
-  .header-right {
-    display: flex;
-    align-items: center;
-  }
-  
-  .header-right a {
-    color: white;
-    text-decoration: none;
-    font-size: 16px;
-  }
-  
-  .header-right a:hover {
-    color: #ff7f50;
-  }
-  
-  .user-profile {
-    display: flex;
-    align-items: center;
-  }
-  
-  .profile-btn {
-    background-color: #ff7f50;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    padding: 10px;
-    width: 40px;
-    height: 40px;
-    font-size: 18px;
-    font-weight: bold;
-    text-align: center;
-    cursor: pointer;
-  }
-  
-  .profile-btn:hover {
-    background-color: #ff5722;
-  }
-  
-  .profile-btn:focus {
-    outline: none;
-  }
-  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #ddd;
+}
+
+.logo a {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-decoration: none;
+  color: #e2e1ec;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-links a {
+  text-decoration: none;
+  font-size: 1rem;
+  color: #333;
+}
+
+.login-btn {
+  background-color: #e0e0e6;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+.profile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e0dfe6;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  cursor: pointer;
+}
