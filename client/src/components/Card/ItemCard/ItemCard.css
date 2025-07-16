@@ -1,3 +1,4 @@
+/* Main Card Container */
 .product__card__card {
   width: 250px;
   margin: 15px;
@@ -12,11 +13,13 @@
   transform: scale(1.03);
 }
 
+/* Flex Column Layout */
 .product__card {
   display: flex;
   flex-direction: column;
 }
 
+/* Product Image Container */
 .product__image {
   width: 100%;
   height: 250px;
@@ -24,6 +27,7 @@
   position: relative;
 }
 
+/* Product Image */
 .product__img {
   width: 100%;
   height: 100%;
@@ -31,10 +35,12 @@
   transition: transform 0.3s ease;
 }
 
+/* Hover Zoom Effect */
 .product__image:hover .product__img {
   transform: scale(1.05);
 }
 
+/* Card Details Section */
 .product__card__detail {
   padding: 16px;
   display: flex;
@@ -42,18 +48,20 @@
   justify-content: space-between;
 }
 
+/* Product Name with Link */
 .product__name a {
   font-size: 1.1rem;
   font-weight: 600;
   color: #333;
   text-decoration: none;
-  transition: color 0.2s;
+  transition: color 0.2s ease;
 }
 
 .product__name a:hover {
   color: #007bff;
 }
 
+/* Product Description */
 .product__description {
   font-size: 0.9rem;
   color: #666;
@@ -61,6 +69,7 @@
   min-height: 40px;
 }
 
+/* Product Price */
 .product__price {
   font-size: 1rem;
   font-weight: 500;
@@ -68,8 +77,20 @@
   margin-bottom: 10px;
 }
 
+/* Action Buttons (Wishlist & Cart) */
 .product__card__action {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+/* Icon Button Customization (Optional if needed) */
+.product__card__action .MuiIconButton-root {
+  background-color: #f5f5f5;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.product__card__action .MuiIconButton-root:hover {
+  background-color: #ffe26e33;
 }

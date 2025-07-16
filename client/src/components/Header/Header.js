@@ -1,22 +1,35 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import './Header.css'; // create/update CSS accordingly
+import { useSelector, useDispatch } from 'react-redux';
+import { signOutUserSuccess } from '../../redux/userSlice';
+import './Header.css';
 
 const Header = () => {
   const currentUser = useSelector((state) => state.user.currentUser);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const getUserInitials = (name) => {
     if (!name) return '';
-    const parts = name.trim().split(' ');
-    return parts.map(part => part[0]).join('').toUpperCase();
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase();
+  };
+
+  const handleLogout = () => {
+    setShowDropdown(false);
+    dispatch(signOutUserSuccess());
+    localStorage.removeItem('persist:root');
+    navigate('/account/login');
   };
 
   return (
     <header className="header">
       <div className="logo">
-        <Link to="/">🛍️ MyShop</Link>
+        <Link to="/">🛍️ COMB</Link>
       </div>
 
       <nav className="nav-links">
@@ -27,12 +40,21 @@ const Header = () => {
         {!currentUser ? (
           <Link to="/account/login" className="login-btn">Login</Link>
         ) : (
-          <div
-            className="profile-icon"
-            onClick={() => navigate('/account/me')}
-            title="My Account"
-          >
-            {getUserInitials(currentUser.name)}
+          <div className="profile-wrapper">
+            <div
+              className="profile-icon"
+              onClick={() => setShowDropdown(!showDropdown)}
+              title="Account"
+            >
+              {getUserInitials(currentUser.name)}
+            </div>
+
+            {showDropdown && (
+              <div className="profile-dropdown">
+                <p onClick={() => navigate('/account/me')}>My Account</p>
+                <p onClick={handleLogout}>Logout</p>
+              </div>
+            )}
           </div>
         )}
       </nav>

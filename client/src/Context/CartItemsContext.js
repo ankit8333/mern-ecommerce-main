@@ -1,50 +1,70 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState } from 'react';
 
-// Create the CartItemsContext
-export const CartItemsContext = createContext({
-  items: [],
-  totalAmount: 0,
-  addItem: () => {},
-  removeItem: () => {},
-  quantity: () => {}
-});
+export const CartItemsContext = createContext();
 
-// CartItemsProvider - This should wrap your app component
-export const CartItemsProvider = (props) => {
-  const [cartItems, setCartItems] = useState([]);
-  const [totalAmountOfItems, setTotalAmountOfItems] = useState(0);
+const CartItemsProvider = ({ children }) => {
+  const [items, setItems] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
 
-  const addItem = (item, quantity) => {
-    // Ensure the item is added properly
-    setCartItems((prevItems) => [...prevItems, { ...item, itemQuantity: quantity }]);
-  };
+  const addToCart = (newItem) => {
+    setItems((prevItems) => {
+      const index = prevItems.findIndex(
+        (item) =>
+          item.id === newItem.id && item.selectedSize === newItem.selectedSize
+      );
 
-  const removeItem = (item) => {
-    setCartItems((prevItems) => prevItems.filter((prevItem) => prevItem.id !== item.id));
-  };
-
-  const calculateTotalAmount = (currentCartItems) => {
-    let total = 0;
-    currentCartItems.forEach((item) => {
-      total += item.price * item.itemQuantity;
+      if (index !== -1) {
+        const updatedItems = [...prevItems];
+        updatedItems[index].itemQuantity += 1;
+        return updatedItems;
+      } else {
+        return [...prevItems, { ...newItem, itemQuantity: 1 }];
+      }
     });
-    setTotalAmountOfItems(total);
+
+    setTotalAmount((prev) => prev + newItem.price);
   };
 
-  // Recalculate total amount when cart items change
-  useEffect(() => {
-    calculateTotalAmount(cartItems);
-  }, [cartItems]);
+  const removeItem = (targetItem) => {
+    setItems((prevItems) =>
+      prevItems.filter(
+        (item) =>
+          !(
+            item.id === targetItem.id &&
+            item.selectedSize === targetItem.selectedSize
+          )
+      )
+    );
+
+    setTotalAmount((prev) =>
+      prev - targetItem.price * targetItem.itemQuantity
+    );
+  };
+
+  const quantity = (id, action, size) => {
+    setItems((prevItems) =>
+      prevItems.map((item) => {
+        if (item.id === id && item.selectedSize === size) {
+          if (action === 'INC') {
+            setTotalAmount((prev) => prev + item.price);
+            return { ...item, itemQuantity: item.itemQuantity + 1 };
+          } else if (action === 'DEC' && item.itemQuantity > 1) {
+            setTotalAmount((prev) => prev - item.price);
+            return { ...item, itemQuantity: item.itemQuantity - 1 };
+          }
+        }
+        return item;
+      })
+    );
+  };
 
   return (
-    <CartItemsContext.Provider value={{
-      items: cartItems,
-      totalAmount: totalAmountOfItems,
-      addItem,
-      removeItem,
-      quantity: () => {}
-    }}>
-      {props.children}
+    <CartItemsContext.Provider
+      value={{ items, addToCart, removeItem, quantity, totalAmount }}
+    >
+      {children}
     </CartItemsContext.Provider>
   );
 };
+
+export default CartItemsProvider;
